@@ -1,0 +1,4 @@
+rootProject.name = 'paparazzi'
+include 'paparazzi-compiler'
+include 'paparazzi-annotations'
+
