@@ -2,12 +2,12 @@ package com.hellostu.paparazzi.compiler;
 
 import com.google.auto.service.AutoService;
 import com.hellostu.paparazzi.Listener;
-import com.sun.tools.javac.code.Symbol;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
 import java.util.Collections;
@@ -85,8 +85,8 @@ public final class PaparazziProcessor extends AbstractProcessor {
         ListenerModel listenerModel = new ListenerModel(packageName, className, typeElement.asType());
         for(Element element : typeElement.getEnclosedElements()) {
             if(element.getKind() == ElementKind.METHOD) {
-                Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) element;
-                listenerModel.addListenerMethod(methodSymbol);
+                ExecutableElement executableElement = (ExecutableElement) element;
+                listenerModel.addListenerMethod(executableElement);
             }
         }
         return listenerModel;

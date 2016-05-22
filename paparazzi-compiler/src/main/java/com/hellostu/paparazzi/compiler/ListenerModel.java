@@ -1,9 +1,9 @@
 package com.hellostu.paparazzi.compiler;
 
 import com.squareup.javapoet.*;
-import com.sun.tools.javac.code.Symbol;
-
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class ListenerModel {
     private String                          packageName;
     private String                          className;
     private TypeMirror                      typeMirror;
-    private ArrayList<Symbol.MethodSymbol>  methods;
+    private ArrayList<ExecutableElement>    methods;
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE
@@ -26,15 +26,15 @@ public class ListenerModel {
         this.className = className;
         this.packageName = packageName;
         this.typeMirror = typeMirror;
-        this.methods = new ArrayList<Symbol.MethodSymbol>();
+        this.methods = new ArrayList<ExecutableElement>();
     }
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE
     ///////////////////////////////////////////////////////////////
 
-    public void addListenerMethod(Symbol.MethodSymbol method) {
-        methods.add(method);
+    public void addListenerMethod(ExecutableElement executableElement) {
+        methods.add(executableElement);
     }
 
     public JavaFile makeJavaFile() {
@@ -69,27 +69,27 @@ public class ListenerModel {
                 .addMethod(addListenerMethod)
                 .addMethod(removeListenerMethod);
 
-        for(Symbol.MethodSymbol methodSymbol : methods) {
-            MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(methodSymbol.name.toString())
+        for(ExecutableElement executableElement : methods) {
+            MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(Override.class);
 
-            List<Symbol.VarSymbol> params = methodSymbol.params();
-            for(Symbol.VarSymbol varSymbol : params) {
-                methodSpecBuilder.addParameter(TypeName.get(varSymbol.type), varSymbol.name.toString());
+            List<? extends VariableElement> params = executableElement.getParameters();
+            for(VariableElement variableElement : params) {
+                methodSpecBuilder.addParameter(TypeName.get(variableElement.asType()), variableElement.getSimpleName().toString());
             }
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("listener.");
-            stringBuilder.append(methodSymbol.name.toString());
+            stringBuilder.append(executableElement.getSimpleName().toString());
             stringBuilder.append("(");
 
             for(int i = 0; i < params.size(); i++) {
-                Symbol.VarSymbol varSymbol = params.get(i);
+                VariableElement variableElement = params.get(i);
                 if(i != 0) {
                     stringBuilder.append(", ");
                 }
-                stringBuilder.append(varSymbol.name);
+                stringBuilder.append(variableElement.getSimpleName());
             }
             stringBuilder.append(")");
 
