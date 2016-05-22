@@ -1,8 +1,4 @@
-group 'com.mixcloud.paparazzi'
-version '1.0-SNAPSHOT'
-
 apply plugin: 'java'
-compileJava.options.useAnt = true
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -17,6 +13,7 @@ dependencies {
 
     compile project(':paparazzi-annotations')
 
+    testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'com.google.truth', name: 'truth', version: '0.22'
     testCompile group: 'com.google.testing.compile', name: 'compile-testing', version: '0.9'

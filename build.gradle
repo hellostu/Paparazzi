@@ -1,6 +1,5 @@
-group 'com.hellostu.paparazzi'
-version '1.0-SNAPSHOT'
-
-repositories {
-    jcenter()
+subprojects { project ->
+    repositories {
+        jcenter()
+    }
 }

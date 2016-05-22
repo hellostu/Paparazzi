@@ -1,6 +1,3 @@
-group 'com.mixcloud.paparazzi'
-version '1.0-SNAPSHOT'
-
 apply plugin: 'java'
 
 repositories {
