@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="paparazzi-annotations.paparazzi-annotations">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/paparazzi-annotations/build/libs/paparazzi-annotations.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

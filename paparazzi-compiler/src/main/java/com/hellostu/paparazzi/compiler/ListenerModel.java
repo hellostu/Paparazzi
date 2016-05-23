@@ -3,10 +3,9 @@ package com.hellostu.paparazzi.compiler;
 import com.squareup.javapoet.*;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * Created by stuartlynch on 20/05/2016.
@@ -17,16 +16,18 @@ public class ListenerModel {
     private String                          className;
     private TypeMirror                      typeMirror;
     private ArrayList<ExecutableElement>    methods;
+    private Reference                       reference;
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE
     ///////////////////////////////////////////////////////////////
 
-    public ListenerModel(String packageName, String className, TypeMirror typeMirror) {
+    public ListenerModel(String packageName, String className, TypeMirror typeMirror, Reference reference) {
         this.className = className;
         this.packageName = packageName;
         this.typeMirror = typeMirror;
-        this.methods = new ArrayList<ExecutableElement>();
+        this.methods = new ArrayList<>();
+        this.reference = reference;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -38,31 +39,32 @@ public class ListenerModel {
     }
 
     public JavaFile makeJavaFile() {
-        ParameterizedTypeName parameterizedTypeName = ParameterizedTypeName.get(ClassName.get(ArrayList.class), TypeName.get(typeMirror));
-
-        FieldSpec listenersField = FieldSpec.builder(parameterizedTypeName, "listeners")
-                .addModifiers(Modifier.PRIVATE)
-                .build();
+        String listenersListVariableName = "listeners";
+        FieldSpec listenersField = new FieldListeners(TypeName.get(typeMirror), listenersListVariableName, reference)
+                .generateFieldSpec();
 
         MethodSpec constructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addStatement("listeners = new ArrayList<>()")
                 .build();
 
-        MethodSpec addListenerMethod = MethodSpec.methodBuilder("addListener")
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(TypeName.get(typeMirror), "listener")
-                .addStatement("listeners.add(listener)")
-                .build();
+        MethodSpec addListenerMethod = new MethodAddListener(className, TypeName.get(typeMirror), listenersListVariableName, reference)
+                .generateMethodSpec();
 
-        MethodSpec removeListenerMethod = MethodSpec.methodBuilder("removeListener")
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(TypeName.get(typeMirror), "listener")
-                .addStatement("listeners.remove(listener)")
-                .build();
+        MethodSpec removeListenerMethod = new MethodRemoveListener(className, TypeName.get(typeMirror), listenersListVariableName, reference)
+                .generateMethodSpec();
 
         String[] classNameElements = className.split("\\.");
-        TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(classNameElements[classNameElements.length-1] + "s")
+        String newClassName = "";
+        switch (reference) {
+            case STRONG:
+                newClassName = classNameElements[classNameElements.length-1] + "s";
+                break;
+            case WEAK:
+                newClassName = "Weak" + classNameElements[classNameElements.length-1] + "s";
+                break;
+        }
+        TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(newClassName)
                 .addSuperinterface(TypeName.get(typeMirror))
                 .addField(listenersField)
                 .addMethod(constructor)
@@ -70,34 +72,8 @@ public class ListenerModel {
                 .addMethod(removeListenerMethod);
 
         for(ExecutableElement executableElement : methods) {
-            MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(executableElement.getSimpleName().toString())
-                    .addModifiers(Modifier.PUBLIC)
-                    .addAnnotation(Override.class);
-
-            List<? extends VariableElement> params = executableElement.getParameters();
-            for(VariableElement variableElement : params) {
-                methodSpecBuilder.addParameter(TypeName.get(variableElement.asType()), variableElement.getSimpleName().toString());
-            }
-
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("listener.");
-            stringBuilder.append(executableElement.getSimpleName().toString());
-            stringBuilder.append("(");
-
-            for(int i = 0; i < params.size(); i++) {
-                VariableElement variableElement = params.get(i);
-                if(i != 0) {
-                    stringBuilder.append(", ");
-                }
-                stringBuilder.append(variableElement.getSimpleName());
-            }
-            stringBuilder.append(")");
-
-            methodSpecBuilder.beginControlFlow("for($L listener : listeners)", className)
-                    .addStatement(stringBuilder.toString())
-                    .endControlFlow();
-
-            typeSpecBuilder.addMethod(methodSpecBuilder.build());
+            MethodListenerImplementation listenerMethod = new MethodListenerImplementation(executableElement, className, "listeners", reference);
+            typeSpecBuilder.addMethod(listenerMethod.generateMethodSpec());
         }
 
         TypeSpec typeSpec = typeSpecBuilder.build();

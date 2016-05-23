@@ -1,7 +1,8 @@
 package com.hellostu.paparazzi.compiler;
 
 import com.google.auto.service.AutoService;
-import com.hellostu.paparazzi.Listener;
+import com.hellostu.paparazzi.annotations.Listener;
+import com.hellostu.paparazzi.annotations.WeakListener;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -10,7 +11,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static javax.tools.Diagnostic.Kind.ERROR;
@@ -38,16 +39,29 @@ public final class PaparazziProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Collections.singleton(Listener.class.getName());
+        Set<String> annotationTypes = new LinkedHashSet<>();
+        annotationTypes.add(Listener.class.getCanonicalName());
+        annotationTypes.add(WeakListener.class.getCanonicalName());
+        return annotationTypes;
     }
 
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Listener.class);
-
         for(Element element : elements) {
             if(element instanceof TypeElement) {
                 try {
-                    processTypeElement((TypeElement)element).makeJavaFile().writeTo(filer);
+                    processTypeElement((TypeElement)element, Reference.STRONG).makeJavaFile().writeTo(filer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        elements = roundEnv.getElementsAnnotatedWith(WeakListener.class);
+        for(Element element : elements) {
+            if(element instanceof TypeElement) {
+                try {
+                    processTypeElement((TypeElement)element, Reference.WEAK).makeJavaFile().writeTo(filer);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -57,7 +71,7 @@ public final class PaparazziProcessor extends AbstractProcessor {
         return false;
     }
 
-    private ListenerModel processTypeElement(TypeElement typeElement) {
+    private ListenerModel processTypeElement(TypeElement typeElement, Reference reference) {
         if(typeElement.getKind().isInterface() == false) {
             messager.printMessage(ERROR, "Listener tag only be placed on an Interface type");
             return null;
@@ -79,10 +93,8 @@ public final class PaparazziProcessor extends AbstractProcessor {
         }
         String packageName = parentElement.getEnclosingElement().toString();
         className = className.substring(packageName.length() + 1);
-        System.out.println(className);
-        System.out.println(packageName);
 
-        ListenerModel listenerModel = new ListenerModel(packageName, className, typeElement.asType());
+        ListenerModel listenerModel = new ListenerModel(packageName, className, typeElement.asType(), reference);
         for(Element element : typeElement.getEnclosedElements()) {
             if(element.getKind() == ElementKind.METHOD) {
                 ExecutableElement executableElement = (ExecutableElement) element;
