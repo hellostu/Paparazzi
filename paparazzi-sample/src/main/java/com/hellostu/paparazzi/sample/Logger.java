@@ -1,6 +1,6 @@
 package com.hellostu.paparazzi.sample;
 
-import com.hellostu.paparazzi.annotations.Listener;
+import com.hellostu.paparazzi.Listener;
 
 /**
  * Created by stuartlynch on 23/05/16.

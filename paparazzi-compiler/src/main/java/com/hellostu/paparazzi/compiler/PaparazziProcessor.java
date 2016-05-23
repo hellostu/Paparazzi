@@ -1,8 +1,8 @@
 package com.hellostu.paparazzi.compiler;
 
 import com.google.auto.service.AutoService;
-import com.hellostu.paparazzi.annotations.Listener;
-import com.hellostu.paparazzi.annotations.WeakListener;
+import com.hellostu.paparazzi.Listener;
+import com.hellostu.paparazzi.WeakListener;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;

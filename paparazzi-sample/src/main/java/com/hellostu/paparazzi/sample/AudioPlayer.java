@@ -5,7 +5,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 
-import com.hellostu.paparazzi.annotations.Listener;
+import com.hellostu.paparazzi.Listener;
 
 import java.io.IOException;
 
