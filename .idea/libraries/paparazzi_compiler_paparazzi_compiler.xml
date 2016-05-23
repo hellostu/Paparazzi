@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="paparazzi-compiler.paparazzi-compiler">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/paparazzi-compiler/build/libs/paparazzi-compiler.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
