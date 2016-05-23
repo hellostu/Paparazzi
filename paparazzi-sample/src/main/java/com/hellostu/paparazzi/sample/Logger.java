@@ -8,7 +8,7 @@ import com.hellostu.paparazzi.Listener;
 public class Logger {
 
     private AudioPlayer audioPlayer;
-    private Outputs outputs = new Outputs();
+    private Logger_Outputs outputs = new Logger_Outputs();
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE
@@ -30,11 +30,11 @@ public class Logger {
     ///////////////////////////////////////////////////////////////
 
     public void addOutput(Output output) {
-        outputs.addListener(output);
+        outputs.addOutput(output);
     }
 
     public void removeOutput(Output output) {
-        outputs.removeListener(output);
+        outputs.removeOutput(output);
     }
 
     ///////////////////////////////////////////////////////////////

@@ -13,6 +13,7 @@ import java.util.Iterator;
 public class MethodAddListener {
 
     private String      listenerClassName;
+    private String      shortListenerClassName;
     private TypeName    listenerTypeName;
     private String      listenerListVariableName;
     private Reference   reference;
@@ -26,6 +27,9 @@ public class MethodAddListener {
         this.listenerTypeName = listenerTypeName;
         this.listenerListVariableName = listenerListVariableName;
         this.reference = reference;
+
+        String[] components = listenerClassName.split("\\.");
+        this.shortListenerClassName = components[components.length-1];
     }
 
     ///////////////////////////////////////////////////////////////
@@ -47,7 +51,7 @@ public class MethodAddListener {
     ///////////////////////////////////////////////////////////////
 
     private MethodSpec generateStrongMethodSpec() {
-        return MethodSpec.methodBuilder("addListener")
+        return MethodSpec.methodBuilder("add" + shortListenerClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(listenerTypeName, "listener")
                 .beginControlFlow("for($L storedListener : $L)", listenerClassName, listenerListVariableName)
@@ -60,7 +64,7 @@ public class MethodAddListener {
     }
 
     private MethodSpec generateWeakMethodSpec() {
-        return MethodSpec.methodBuilder("addListener")
+        return MethodSpec.methodBuilder("addWeak" + shortListenerClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(listenerTypeName, "listener")
                 .addStatement("boolean shouldAddNew = true")

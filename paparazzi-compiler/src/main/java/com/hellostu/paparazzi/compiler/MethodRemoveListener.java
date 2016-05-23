@@ -13,6 +13,7 @@ import java.util.Iterator;
 public class MethodRemoveListener {
 
     private String      listenerClassName;
+    private String      shortListenerClassName;
     private TypeName    listenerTypeName;
     private String      listenerListVariableName;
     private Reference   reference;
@@ -26,6 +27,9 @@ public class MethodRemoveListener {
         this.listenerTypeName = listenerTypeName;
         this.listenerListVariableName = listenerListVariableName;
         this.reference = reference;
+
+        String[] components = listenerClassName.split("\\.");
+        this.shortListenerClassName = components[components.length-1];
     }
 
     ///////////////////////////////////////////////////////////////
@@ -47,7 +51,7 @@ public class MethodRemoveListener {
     ///////////////////////////////////////////////////////////////
 
     private MethodSpec generateStrongMethodSpec() {
-        return MethodSpec.methodBuilder("removeListener")
+        return MethodSpec.methodBuilder("remove" +  shortListenerClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(listenerTypeName, "listener")
                 .addStatement("$L.remove(listener)", listenerListVariableName)
@@ -55,7 +59,7 @@ public class MethodRemoveListener {
     }
 
     private MethodSpec generateWeakMethodSpec() {
-        return MethodSpec.methodBuilder("removeListener")
+        return MethodSpec.methodBuilder("removeWeak" +  shortListenerClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(listenerTypeName, "listener")
                 .addStatement("$T<$T<$L>> iterator = $L.iterator()", Iterator.class, WeakReference.class, listenerClassName, listenerListVariableName)

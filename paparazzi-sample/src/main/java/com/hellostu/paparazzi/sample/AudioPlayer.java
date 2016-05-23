@@ -43,7 +43,7 @@ public class AudioPlayer {
     private MediaPlayer mediaPlayer;
 
     private StateManager stateManager = new StateManager();
-    private OnProgressListeners onProgressListeners = new OnProgressListeners();
+    private AudioPlayer_OnProgressListeners onProgressListeners = new AudioPlayer_OnProgressListeners();
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE
@@ -63,19 +63,19 @@ public class AudioPlayer {
     ///////////////////////////////////////////////////////////////
 
     public void addOnStateChangedListener(OnStateChangedListener onStateChangedListener) {
-        stateManager.onStateChangedListeners.addListener(onStateChangedListener);
+        stateManager.onStateChangedListeners.addOnStateChangedListener(onStateChangedListener);
     }
 
     public void removeOnStateChangedListener(OnStateChangedListener onStateChangedListener) {
-        stateManager.onStateChangedListeners.removeListener(onStateChangedListener);
+        stateManager.onStateChangedListeners.removeOnStateChangedListener(onStateChangedListener);
     }
 
     public void addOnProgressListener(OnProgressListener onProgressListener) {
-        onProgressListeners.addListener(onProgressListener);
+        onProgressListeners.addOnProgressListener(onProgressListener);
     }
 
     public void removeOnProgressListener(OnProgressListener onProgressListener) {
-        onProgressListeners.removeListener(onProgressListener);
+        onProgressListeners.removeOnProgressListener(onProgressListener);
     }
 
     public State getState() {
@@ -240,7 +240,7 @@ public class AudioPlayer {
     private class StateManager {
 
         private State state = State.EMPTY;
-        private OnStateChangedListeners onStateChangedListeners = new OnStateChangedListeners();
+        private AudioPlayer_OnStateChangedListeners onStateChangedListeners = new AudioPlayer_OnStateChangedListeners();
 
         public State getState() {
             return state;

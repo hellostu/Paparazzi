@@ -58,10 +58,10 @@ public class ListenerModel {
         String newClassName = "";
         switch (reference) {
             case STRONG:
-                newClassName = classNameElements[classNameElements.length-1] + "s";
+                newClassName = className.replace('.', '_') + "s";
                 break;
             case WEAK:
-                newClassName = "Weak" + classNameElements[classNameElements.length-1] + "s";
+                newClassName = "Weak" + className.replace('.', '_') + "s";
                 break;
         }
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(newClassName)
