@@ -1,5 +1,5 @@
 include ':paparazzi-sample'
-rootProject.name = 'paparazzi'
 include 'paparazzi-compiler'
-include 'paparazzi-annotations'
+include 'paparazzi'
 
+rootProject.name = 'paparazzi-parent'
