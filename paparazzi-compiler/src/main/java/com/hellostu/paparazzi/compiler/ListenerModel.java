@@ -54,7 +54,6 @@ public class ListenerModel {
         MethodSpec removeListenerMethod = new MethodRemoveListener(className, TypeName.get(typeMirror), listenersListVariableName, reference)
                 .generateMethodSpec();
 
-        String[] classNameElements = className.split("\\.");
         String newClassName = "";
         switch (reference) {
             case STRONG:
@@ -65,6 +64,7 @@ public class ListenerModel {
                 break;
         }
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(newClassName)
+                .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(TypeName.get(typeMirror))
                 .addField(listenersField)
                 .addMethod(constructor)
