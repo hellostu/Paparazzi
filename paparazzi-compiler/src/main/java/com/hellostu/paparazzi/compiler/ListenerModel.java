@@ -60,7 +60,16 @@ public class ListenerModel {
                 newClassName = className.replace('.', '_') + "s";
                 break;
             case WEAK:
-                newClassName = "Weak" + className.replace('.', '_') + "s";
+                String[] components = className.split("\\.");
+                newClassName = "Weak" + components[components.length-1] + "s";
+                components[components.length - 1] = newClassName;
+                newClassName = "";
+                for(int i=0; i< components.length; i++) {
+                    if(newClassName.equals("") == false) {
+                        newClassName += "_";
+                    }
+                    newClassName += components[i];
+                }
                 break;
         }
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(newClassName)

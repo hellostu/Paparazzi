@@ -202,4 +202,82 @@ public class CompilerTests {
                 .and().generatesSources(javaFileObject2);
     }
 
+    @Test
+    public void testWeakInnerClassListenerCodeGeneration() {
+        JavaFileObject javaFileObject = JavaFileObjects.forSourceLines("HelloWorld",
+                "package com.example.helloworld;",
+                "",
+                "import com.hellostu.paparazzi.WeakListener;",
+                "import java.util.ArrayList;",
+                "",
+                "public class HelloWorld {",
+                "@WeakListener",
+                "public interface HelloWorldListener {",
+                "void onHelloWorld(String helloWorld);",
+                "}",
+                "}");
+
+        JavaFileObject javaFileObject2 = JavaFileObjects.forSourceLines("HelloWorld_WeakHelloWorldListeners", "package com.example.helloworld;",
+                "",
+                "import java.lang.Override;",
+                "import java.lang.String;",
+                "import java.lang.ref.WeakReference;",
+                "import java.util.ArrayList;",
+                "import java.util.Iterator;",
+                "",
+                "public class HelloWorld_WeakHelloWorldListeners implements HelloWorld.HelloWorldListener {",
+                "  private ArrayList<WeakReference<HelloWorld.HelloWorldListener>> listeners;",
+                "",
+                "  public HelloWorld_WeakHelloWorldListeners() {",
+                "    listeners = new ArrayList<>();",
+                "  }",
+                "",
+                "  public void addWeakHelloWorldListener(HelloWorld.HelloWorldListener listener) {",
+                "    boolean shouldAddNew = true;",
+                "    Iterator<WeakReference<HelloWorld.HelloWorldListener>> iterator = listeners.iterator();",
+                "    while(iterator.hasNext()) {",
+                "      HelloWorld.HelloWorldListener storedListener = iterator.next().get();",
+                "      if(storedListener == null) {",
+                "        iterator.remove();",
+                "      } else if(storedListener == listener) {",
+                "        shouldAddNew = false;",
+                "      }",
+                "    }",
+                "    if(shouldAddNew) {",
+                "      listeners.add(new WeakReference(listener));",
+                "    }",
+                "  }",
+                "",
+                "  public void removeWeakHelloWorldListener(HelloWorld.HelloWorldListener listener) {",
+                "    Iterator<WeakReference<HelloWorld.HelloWorldListener>> iterator = listeners.iterator();",
+                "    while(iterator.hasNext()) {",
+                "      HelloWorld.HelloWorldListener storedListener = iterator.next().get();",
+                "      if(storedListener == null || storedListener == listener) {",
+                "        iterator.remove();",
+                "      }",
+                "    }",
+                "  }",
+                "",
+                "  @Override",
+                "  public void onHelloWorld(String helloWorld) {",
+                "    Iterator<WeakReference<HelloWorld.HelloWorldListener>> iterator = listeners.iterator();",
+                "    while(iterator.hasNext()) {",
+                "      HelloWorld.HelloWorldListener listener = iterator.next().get();",
+                "      if(listener != null) {",
+                "        listener.onHelloWorld(helloWorld);",
+                "      } else {",
+                "        iterator.remove();",
+                "      }",
+                "    }",
+                "  }",
+                "}");
+
+        assert_().about(javaSource())
+                .that(javaFileObject)
+                .processedWith(new PaparazziProcessor())
+                .compilesWithoutError()
+                .and().generatesSources(javaFileObject2);
+    }
+
+
 }
