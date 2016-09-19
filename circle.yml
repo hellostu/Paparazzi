@@ -19,3 +19,7 @@ dependencies:
     - "/usr/local/android-sdk-linux/build-tools/23.0.3"
   override:
     - sudo pip install awscli
+
+checkout:
+  post:
+    - cp ci.properties local.properties
