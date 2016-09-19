@@ -18,10 +18,10 @@ ext {
 
     libraryDescription = 'Remove the ugly boilerplate code in adding multiple listners to a class.'
 
-    siteUrl = 'https://github.com/hellostu/Paparazzi'
-    gitUrl = 'https://github.com:hellostu/Paparazzi.git'
+    siteUrl     = 'https://github.com/hellostu/Paparazzi'
+    gitUrl      = 'https://github.com:hellostu/Paparazzi.git'
 
-    libraryVersion = '0.3.0'
+    libraryVersion = '0.1.0'
 
     developerId = 'hellostu'
     developerName = 'Stuart Lynch'
