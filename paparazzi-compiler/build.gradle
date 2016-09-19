@@ -18,3 +18,30 @@ dependencies {
     testCompile group: 'com.google.truth', name: 'truth', version: '0.22'
     testCompile group: 'com.google.testing.compile', name: 'compile-testing', version: '0.9'
 }
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'paparazzi-compiler'
+
+    publishedGroupId = 'com.hellostu.paparazzi'
+    libraryName = 'paparazzi-compiler'
+    artifact = 'paparazzi-compiler'
+
+    libraryDescription = 'Remove the ugly boilerplate code in adding multiple listners to a class.'
+
+    siteUrl = 'https://github.com/hellostu/Paparazzi'
+    gitUrl = 'https://github.com:hellostu/Paparazzi.git'
+
+    libraryVersion = '0.3.0'
+
+    developerId = 'hellostu'
+    developerName = 'Stuart Lynch'
+    developerEmail = 'stu@iname.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
