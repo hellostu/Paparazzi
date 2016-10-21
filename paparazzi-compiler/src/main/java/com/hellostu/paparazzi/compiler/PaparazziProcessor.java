@@ -10,8 +10,12 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.type.TypeMirror;
+
 import java.io.IOException;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static javax.tools.Diagnostic.Kind.ERROR;
@@ -87,6 +91,8 @@ public final class PaparazziProcessor extends AbstractProcessor {
         }
 
         String className = typeElement.getQualifiedName().toString();
+        List<? extends TypeParameterElement> generics = typeElement.getTypeParameters();
+
         TypeElement parentElement = typeElement;
         while(parentElement.getNestingKind().isNested()) {
             parentElement = (TypeElement)parentElement.getEnclosingElement();
@@ -94,7 +100,7 @@ public final class PaparazziProcessor extends AbstractProcessor {
         String packageName = parentElement.getEnclosingElement().toString();
         className = className.substring(packageName.length() + 1);
 
-        ListenerModel listenerModel = new ListenerModel(packageName, className, typeElement.asType(), reference);
+        ListenerModel listenerModel = new ListenerModel(packageName, className, generics, typeElement.asType(), reference);
         for(Element element : typeElement.getEnclosedElements()) {
             if(element.getKind() == ElementKind.METHOD) {
                 ExecutableElement executableElement = (ExecutableElement) element;

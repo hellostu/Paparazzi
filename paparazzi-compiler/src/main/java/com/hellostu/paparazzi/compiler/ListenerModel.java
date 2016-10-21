@@ -3,31 +3,38 @@ package com.hellostu.paparazzi.compiler;
 import com.squareup.javapoet.*;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by stuartlynch on 20/05/2016.
  */
 public class ListenerModel {
 
-    private String                          packageName;
-    private String                          className;
-    private TypeMirror                      typeMirror;
-    private ArrayList<ExecutableElement>    methods;
-    private Reference                       reference;
+    private String                                  packageName;
+    private String                                  className;
+    private TypeMirror                              typeMirror;
+    private ArrayList<ExecutableElement>            methods;
+    private Reference                               reference;
+    private List<? extends TypeParameterElement>    generics;
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE
     ///////////////////////////////////////////////////////////////
 
-    public ListenerModel(String packageName, String className, TypeMirror typeMirror, Reference reference) {
+    public ListenerModel(String packageName, String className, List<? extends TypeParameterElement> generics, TypeMirror typeMirror, Reference reference) {
         this.className = className;
         this.packageName = packageName;
         this.typeMirror = typeMirror;
         this.methods = new ArrayList<>();
         this.reference = reference;
+        this.generics = generics;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -72,6 +79,7 @@ public class ListenerModel {
                 }
                 break;
         }
+
         TypeSpec.Builder typeSpecBuilder = TypeSpec.classBuilder(newClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(TypeName.get(typeMirror))
@@ -79,6 +87,10 @@ public class ListenerModel {
                 .addMethod(constructor)
                 .addMethod(addListenerMethod)
                 .addMethod(removeListenerMethod);
+
+        for(TypeParameterElement t : generics) {
+            typeSpecBuilder.addTypeVariable(TypeVariableName.get(t));
+        }
 
         for(ExecutableElement executableElement : methods) {
             MethodListenerImplementation listenerMethod = new MethodListenerImplementation(executableElement, className, "listeners", reference);
