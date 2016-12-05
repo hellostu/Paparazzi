@@ -9,8 +9,6 @@ machine:
     GRADLE_OPTS: -Xmx512m
     TERM: dumb
     TMPDIR: $CIRCLE_ARTIFACTS
-  java:
-    version: openjdk8
 
 dependencies:
   pre:
