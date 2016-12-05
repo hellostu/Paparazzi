@@ -1,6 +1,8 @@
 package com.hellostu.paparazzi.sample;
 
 import com.hellostu.paparazzi.Listener;
+import com.hellostu.paparazzi.sample.listeners.OnProgressListener;
+import com.hellostu.paparazzi.sample.listeners.OnStateChangedListener;
 
 /**
  * Created by stuartlynch on 23/05/16.
@@ -8,7 +10,7 @@ import com.hellostu.paparazzi.Listener;
 public class Logger {
 
     private AudioPlayer audioPlayer;
-    private Logger_Outputs outputs = new Logger_Outputs();
+    private LoggerOutputs outputs = new LoggerOutputs();
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE
@@ -29,19 +31,19 @@ public class Logger {
     // Public Properties
     ///////////////////////////////////////////////////////////////
 
-    public void addOutput(Output output) {
-        outputs.addOutput(output);
+    public void addOutput(LoggerOutput output) {
+        outputs.addLoggerOutput(output);
     }
 
-    public void removeOutput(Output output) {
-        outputs.removeOutput(output);
+    public void removeOutput(LoggerOutput output) {
+        outputs.removeLoggerOutput(output);
     }
 
     ///////////////////////////////////////////////////////////////
     // AudioPlayer.OnStateChangedListener
     ///////////////////////////////////////////////////////////////
 
-    private AudioPlayer.OnStateChangedListener onStateChangedListener = new AudioPlayer.OnStateChangedListener() {
+    private OnStateChangedListener onStateChangedListener = new OnStateChangedListener() {
         @Override
         public void onStateChanged(AudioPlayer.State state) {
             switch (state) {
@@ -64,20 +66,11 @@ public class Logger {
         }
     };
 
-    private AudioPlayer.OnProgressListener onProgressListener = new AudioPlayer.OnProgressListener() {
+    private OnProgressListener onProgressListener = new OnProgressListener() {
         @Override
         public void onProgress(int progress) {
             outputs.write("Progressed to " + progress + " milliseconds");
         }
     };
-
-    ///////////////////////////////////////////////////////////////
-    // interface: Output
-    ///////////////////////////////////////////////////////////////
-
-    @Listener
-    public interface Output {
-        void write(String string);
-    }
 
 }

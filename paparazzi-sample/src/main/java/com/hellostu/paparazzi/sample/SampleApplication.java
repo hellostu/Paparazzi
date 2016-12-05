@@ -6,7 +6,7 @@ import android.util.Log;
 /**
  * Created by stuartlynch on 23/05/16.
  */
-public class SampleApplication extends Application implements Logger.Output {
+public class SampleApplication extends Application implements LoggerOutput {
 
     private AudioPlayer audioPlayer;
     private Logger logger;

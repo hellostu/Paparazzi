@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "24.0.1"
 
     defaultConfig {
         applicationId "com.mixcloud.cache.paparazzi_sample"
@@ -11,6 +10,10 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        jackOptions {
+            enabled true
+        }
     }
     buildTypes {
         release {
@@ -18,14 +21,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
 
-    compile 'com.jakewharton:butterknife:8.0.1'
-    apt 'com.jakewharton:butterknife-compiler:8.0.1'
+    compile             'com.jakewharton:butterknife:8.0.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.0.1'
 
-    compile project(path: ':paparazzi')
-    apt project(path: ':paparazzi-compiler')
+    compile             project(path: ':paparazzi')
+    annotationProcessor project(path: ':paparazzi-compiler')
 }

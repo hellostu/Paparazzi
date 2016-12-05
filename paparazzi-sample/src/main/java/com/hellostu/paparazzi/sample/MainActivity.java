@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.SeekBar;
 
+import com.hellostu.paparazzi.sample.listeners.OnProgressListener;
+import com.hellostu.paparazzi.sample.listeners.OnStateChangedListener;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         seekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
 
-        application.getLogger().addOutput(new Logger.Output() {
+        application.getLogger().addOutput(new LoggerOutput() {
             @Override
             public void write(String string) {
                 loggerView.writeLog(string);
@@ -96,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     // AudioPlayer.OnStateChangedListener
     ///////////////////////////////////////////////////////////////
 
-    private AudioPlayer.OnStateChangedListener onStateChangedListener = new AudioPlayer.OnStateChangedListener() {
+    private OnStateChangedListener onStateChangedListener = new OnStateChangedListener() {
         @Override
         public void onStateChanged(AudioPlayer.State state) {
             switch (audioPlayer.getState()) {
@@ -117,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
     };
 
     ///////////////////////////////////////////////////////////////
-    // AudioPlayer.OnProgressListener
+    // implement: OnProgressListener
     ///////////////////////////////////////////////////////////////
 
-    private AudioPlayer.OnProgressListener onProgressListener = new AudioPlayer.OnProgressListener() {
+    private OnProgressListener onProgressListener = new OnProgressListener() {
         @Override
         public void onProgress(int progress) {
             if(userIsSeeking == false) {

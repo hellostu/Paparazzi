@@ -5,7 +5,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 
-import com.hellostu.paparazzi.Listener;
+import com.hellostu.paparazzi.sample.listeners.*;
 
 import java.io.IOException;
 
@@ -13,24 +13,6 @@ import java.io.IOException;
  * Created by stuartlynch on 23/05/16.
  */
 public class AudioPlayer {
-
-    ///////////////////////////////////////////////////////////////
-    // interface: OnProgressListener
-    ///////////////////////////////////////////////////////////////
-
-    @Listener
-    public interface OnProgressListener {
-        void onProgress(int progress);
-    }
-
-    ///////////////////////////////////////////////////////////////
-    // interface: OnStateChangedListener
-    ///////////////////////////////////////////////////////////////
-
-    @Listener
-    public interface OnStateChangedListener {
-        void onStateChanged(State state);
-    }
 
     ///////////////////////////////////////////////////////////////
     // Class Fields
@@ -43,7 +25,7 @@ public class AudioPlayer {
     private MediaPlayer mediaPlayer;
 
     private StateManager stateManager = new StateManager();
-    private AudioPlayer_OnProgressListeners onProgressListeners = new AudioPlayer_OnProgressListeners();
+    private OnProgressListeners onProgressListeners = new OnProgressListeners();
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE
@@ -145,7 +127,7 @@ public class AudioPlayer {
             case PAUSED:
                 stateManager.setState(State.PREPARING_TO_PAUSE);
                 break;
-            case EMPTY:
+            default:
                 return;
         }
 
@@ -187,6 +169,8 @@ public class AudioPlayer {
             case EMPTY:
                 stopObservingProgress();
                 break;
+            default:
+                return;
         }
     }
 
@@ -240,7 +224,7 @@ public class AudioPlayer {
     private class StateManager {
 
         private State state = State.EMPTY;
-        private AudioPlayer_OnStateChangedListeners onStateChangedListeners = new AudioPlayer_OnStateChangedListeners();
+        private OnStateChangedListeners onStateChangedListeners = new OnStateChangedListeners();
 
         public State getState() {
             return state;
