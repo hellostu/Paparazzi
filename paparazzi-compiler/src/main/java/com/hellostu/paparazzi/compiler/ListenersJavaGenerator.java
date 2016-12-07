@@ -1,5 +1,6 @@
 package com.hellostu.paparazzi.compiler;
 
+import com.hellostu.paparazzi.Executor;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -34,7 +35,6 @@ public class ListenersJavaGenerator {
 
     private TypeElement     typeElement;
     private TypeName        typeName;
-    private Messager        messager;
 
 
     ///////////////////////////////////////////////////////////////
@@ -44,7 +44,6 @@ public class ListenersJavaGenerator {
     public ListenersJavaGenerator(TypeElement typeElement, Messager messager) throws InvalidClassException {
         this.typeElement = typeElement;
         this.typeName = TypeName.get(typeElement.asType());
-        this.messager = messager;
 
         if(typeElement.getKind().isInterface() == false) {
             messager.printMessage(ERROR, "Listener tag only be placed on an Interface type");
@@ -62,6 +61,7 @@ public class ListenersJavaGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(typeName)
                 .addField(generateListenersFieldItem())
+                .addField(generateExecutorFieldItem())
                 .addMethod(generateConstructor())
                 .addMethod(generateAddListenerMethod())
                 .addMethod(generateRemoveListenerMethod())
@@ -91,10 +91,16 @@ public class ListenersJavaGenerator {
                 .build();
     }
 
+    private FieldSpec generateExecutorFieldItem() {
+        return FieldSpec.builder(Executor.class, "executor", Modifier.PRIVATE).build();
+    }
+
     private MethodSpec generateConstructor() {
         return MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("listeners = new ArrayList<>()")
+                .addParameter(Executor.class, "executor")
+                .addStatement("this.listeners = new ArrayList<>()")
+                .addStatement("this.executor = executor")
                 .build();
     }
 
@@ -134,12 +140,17 @@ public class ListenersJavaGenerator {
         for (VariableElement element : executableElement.getParameters()) {
             TypeName typeName = TypeName.get(element.asType());
             String varName = element.getSimpleName().toString();
-            methodSpecBuilder.addParameter(typeName, varName);
+            methodSpecBuilder.addParameter(typeName, varName, Modifier.FINAL);
         }
         methodSpecBuilder.addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-                .beginControlFlow("for($L listener : $L)", typeElement.getSimpleName(), "listeners")
+                .beginControlFlow("for(final $L listener : $L)", typeElement.getSimpleName(), "listeners")
+                .beginControlFlow("this.executor.execute(new $T()", Runnable.class)
+                .beginControlFlow("public void run()")
                 .addStatement(getCallListenerString(executableElement))
+                .endControlFlow()
+                .endControlFlow()
+                .addStatement(")")
                 .endControlFlow();
         return methodSpecBuilder.build();
     }
