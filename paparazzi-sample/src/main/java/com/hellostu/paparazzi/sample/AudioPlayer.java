@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 
+import com.hellostu.paparazzi.Executor;
 import com.hellostu.paparazzi.sample.listeners.*;
 
 import java.io.IOException;
@@ -20,12 +21,19 @@ public class AudioPlayer {
 
     private Handler     progressHandler;
     private boolean     observingAudioProgress = false;
+    private Executor    executor = new Executor() {
+        private Handler handler = new Handler();
+        @Override
+        public void execute(Runnable runnable) {
+            handler.post(runnable);
+        }
+    };
 
     private Context     context;
     private MediaPlayer mediaPlayer;
 
     private StateManager stateManager = new StateManager();
-    private OnProgressListeners onProgressListeners = new OnProgressListeners();
+    private OnProgressListeners onProgressListeners = new OnProgressListeners(executor);
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE
@@ -224,7 +232,7 @@ public class AudioPlayer {
     private class StateManager {
 
         private State state = State.EMPTY;
-        private OnStateChangedListeners onStateChangedListeners = new OnStateChangedListeners();
+        private OnStateChangedListeners onStateChangedListeners = new OnStateChangedListeners(executor);
 
         public State getState() {
             return state;

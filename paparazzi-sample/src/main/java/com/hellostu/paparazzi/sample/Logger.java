@@ -1,5 +1,8 @@
 package com.hellostu.paparazzi.sample;
 
+import android.os.Handler;
+
+import com.hellostu.paparazzi.Executor;
 import com.hellostu.paparazzi.Listener;
 import com.hellostu.paparazzi.sample.listeners.OnProgressListener;
 import com.hellostu.paparazzi.sample.listeners.OnStateChangedListener;
@@ -10,7 +13,14 @@ import com.hellostu.paparazzi.sample.listeners.OnStateChangedListener;
 public class Logger {
 
     private AudioPlayer audioPlayer;
-    private LoggerOutputs outputs = new LoggerOutputs();
+    private Executor executor = new Executor() {
+        private Handler handler = new Handler();
+        @Override
+        public void execute(Runnable runnable) {
+            handler.post(runnable);
+        }
+    };
+    private LoggerOutputs outputs = new LoggerOutputs(executor);
 
     ///////////////////////////////////////////////////////////////
     // LIFECYCLE

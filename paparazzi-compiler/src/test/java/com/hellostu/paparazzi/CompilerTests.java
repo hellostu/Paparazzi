@@ -31,38 +31,48 @@ public class CompilerTests {
                 "void onHelloWorld(String helloWorld);",
                 "}");
 
-        JavaFileObject javaFileObject2 = JavaFileObjects.forSourceLines("HelloWorldListeners", "package com.example.helloworld;",
-                "",
-                "import java.lang.Override;",
-                "import java.lang.String;",
-                "import java.util.ArrayList;",
-                "",
-                "public class HelloWorldListeners implements HelloWorldListener {",
-                "  private ArrayList<HelloWorldListener> listeners;",
-                "",
-                "  public HelloWorldListeners() {",
-                "    listeners = new ArrayList<>();",
-                "  }",
-                "",
-                "  public void addHelloWorldListener(HelloWorldListener listener) {",
-                "    for(HelloWorldListener storedListener : listeners) {",
-                "      if(listener == storedListener) {",
-                "        return;",
-                "      }",
-                "    }",
-                "    listeners.add(listener);",
-                "  }",
-                "",
-                "  public void removeHelloWorldListener(HelloWorldListener listener) {",
-                "    listeners.remove(listener);",
-                "  }",
-                "",
-                "  @Override",
-                "  public void onHelloWorld(String helloWorld) {",
-                "    for(HelloWorldListener listener : listeners) {",
-                "      listener.onHelloWorld(helloWorld);",
-                "    }",
-                "  }",
+        JavaFileObject javaFileObject2 = JavaFileObjects.forSourceLines("HelloWorldListeners", "package com.example.helloworld;\n" +
+                "\n" +
+                "import com.hellostu.paparazzi.Executor;\n" +
+                "import java.lang.Override;\n" +
+                "import java.lang.Runnable;\n" +
+                "import java.lang.String;\n" +
+                "import java.util.ArrayList;\n" +
+                "\n" +
+                "public class HelloWorldListeners implements HelloWorldListener {\n" +
+                "  private ArrayList<HelloWorldListener> listeners;\n" +
+                "\n" +
+                "  private Executor executor;\n" +
+                "\n" +
+                "  public HelloWorldListeners(Executor executor) {\n" +
+                "    this.listeners = new ArrayList<>();\n" +
+                "    this.executor = executor;\n" +
+                "  }\n" +
+                "\n" +
+                "  public void addHelloWorldListener(HelloWorldListener listener) {\n" +
+                "    for(HelloWorldListener storedListener : listeners) {\n" +
+                "      if(listener == storedListener) {\n" +
+                "        return;\n" +
+                "      }\n" +
+                "    }\n" +
+                "    listeners.add(listener);\n" +
+                "  }\n" +
+                "\n" +
+                "  public void removeHelloWorldListener(HelloWorldListener listener) {\n" +
+                "    listeners.remove(listener);\n" +
+                "  }\n" +
+                "\n" +
+                "  @Override\n" +
+                "  public void onHelloWorld(final String helloWorld) {\n" +
+                "    for(final HelloWorldListener listener : listeners) {\n" +
+                "      this.executor.execute(new Runnable() {\n" +
+                "        public void run() {\n" +
+                "          listener.onHelloWorld(helloWorld);\n" +
+                "        }\n" +
+                "      }\n" +
+                "      );\n" +
+                "    }\n" +
+                "  }\n" +
                 "}");
 
         assert_().about(javaSource())
@@ -85,37 +95,47 @@ public class CompilerTests {
                 "void onHelloWorld(T helloWorld);",
                 "}");
 
-        JavaFileObject javaFileObject2 = JavaFileObjects.forSourceLines("HelloWorldListeners", "package com.example.helloworld;",
-                "",
-                "import java.lang.Override;",
-                "import java.util.ArrayList;",
-                "",
-                "public class HelloWorldListeners<T> implements HelloWorldListener<T> {",
-                "  private ArrayList<HelloWorldListener<T>> listeners;",
-                "",
-                "  public HelloWorldListeners() {",
-                "    listeners = new ArrayList<>();",
-                "  }",
-                "",
-                "  public void addHelloWorldListener(HelloWorldListener<T> listener) {",
-                "    for(HelloWorldListener storedListener : listeners) {",
-                "      if(listener == storedListener) {",
-                "        return;",
-                "      }",
-                "    }",
-                "    listeners.add(listener);",
-                "  }",
-                "",
-                "  public void removeHelloWorldListener(HelloWorldListener<T> listener) {",
-                "    listeners.remove(listener);",
-                "  }",
-                "",
-                "  @Override",
-                "  public void onHelloWorld(T helloWorld) {",
-                "    for(HelloWorldListener listener : listeners) {",
-                "      listener.onHelloWorld(helloWorld);",
-                "    }",
-                "  }",
+        JavaFileObject javaFileObject2 = JavaFileObjects.forSourceLines("HelloWorldListeners", "package com.example.helloworld;\n" +
+                "\n" +
+                "import com.hellostu.paparazzi.Executor;\n" +
+                "import java.lang.Override;\n" +
+                "import java.lang.Runnable;\n" +
+                "import java.util.ArrayList;\n" +
+                "\n" +
+                "public class HelloWorldListeners<T> implements HelloWorldListener<T> {\n" +
+                "  private ArrayList<HelloWorldListener<T>> listeners;\n" +
+                "\n" +
+                "  private Executor executor;\n" +
+                "\n" +
+                "  public HelloWorldListeners(Executor executor) {\n" +
+                "    this.listeners = new ArrayList<>();\n" +
+                "    this.executor = executor;\n" +
+                "  }\n" +
+                "\n" +
+                "  public void addHelloWorldListener(HelloWorldListener<T> listener) {\n" +
+                "    for(HelloWorldListener storedListener : listeners) {\n" +
+                "      if(listener == storedListener) {\n" +
+                "        return;\n" +
+                "      }\n" +
+                "    }\n" +
+                "    listeners.add(listener);\n" +
+                "  }\n" +
+                "\n" +
+                "  public void removeHelloWorldListener(HelloWorldListener<T> listener) {\n" +
+                "    listeners.remove(listener);\n" +
+                "  }\n" +
+                "\n" +
+                "  @Override\n" +
+                "  public void onHelloWorld(final T helloWorld) {\n" +
+                "    for(final HelloWorldListener listener : listeners) {\n" +
+                "      this.executor.execute(new Runnable() {\n" +
+                "        public void run() {\n" +
+                "          listener.onHelloWorld(helloWorld);\n" +
+                "        }\n" +
+                "      }\n" +
+                "      );\n" +
+                "    }\n" +
+                "  }\n" +
                 "}");
 
         assert_().about(javaSource())
