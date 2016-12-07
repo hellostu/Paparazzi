@@ -64,7 +64,7 @@ public class CompilerTests {
                 "\n" +
                 "  @Override\n" +
                 "  public void onHelloWorld(final String helloWorld) {\n" +
-                "    for(HelloWorldListener listener : listeners) {\n" +
+                "    for(final HelloWorldListener listener : listeners) {\n" +
                 "      this.executor.execute(new Runnable() {\n" +
                 "        public void run() {\n" +
                 "          listener.onHelloWorld(helloWorld);\n" +
@@ -127,7 +127,7 @@ public class CompilerTests {
                 "\n" +
                 "  @Override\n" +
                 "  public void onHelloWorld(final T helloWorld) {\n" +
-                "    for(HelloWorldListener listener : listeners) {\n" +
+                "    for(final HelloWorldListener listener : listeners) {\n" +
                 "      this.executor.execute(new Runnable() {\n" +
                 "        public void run() {\n" +
                 "          listener.onHelloWorld(helloWorld);\n" +
